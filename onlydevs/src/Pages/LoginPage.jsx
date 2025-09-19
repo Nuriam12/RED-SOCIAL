@@ -1,13 +1,34 @@
 import { Icon } from "@iconify/react";
 import logo from "../assets/Warhammer-logo.jpg"
 import bgImage from "../assets/assets_task_01k5f7k65afxk91wged91w71sm_1758226794_img_1.webp"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import bglogo from "../assets/assets_task_01k5ffy5f4fhpvf2j1g9sh01cq_1758235525_img_1.webp"
+import {useGenerarCodigosAleatorios} from "../componentes/Hooks/useGenerarCodigosAleatorios"
+import { useAuthStore } from "../Store/AuthStore";
+import {useCrearUsuarioYSesionMutate} from "../stack/LoginStack"
+import { Toaster } from "sonner";
+import { useForm } from "react-hook-form";
+
 export const LoginPage = () => {
-    const[showPassword, setShowPassWord] = useState(false)
-    const togglePasswordVisibility = () => {
+    const[showPassword, setShowPassWord] = useState(false);//funcion para mostrar y ocultar contraseña
+    const {setCredenciales} = useAuthStore(); // hacemos llamado al zustand para la autenticacion del emagil y password
+    const [email, setEmail] = useState ("");
+    const [password, setPassword] = useState ("");
+
+    const togglePasswordVisibility = () => { // mostrar y ocultar contraseña
         setShowPassWord(!showPassword)
     };
+    const {handleSubmit} = useForm();
+    const {isPending,mutate} = useCrearUsuarioYSesionMutate()
+
+    useEffect(()=>{ //generarar correos para test
+        const response = useGenerarCodigosAleatorios(); //hacemos el llamado al hook que generar codigos aleatorios
+        const correoCompleto = response+"@gmail.com";
+        setCredenciales ({email:correoCompleto,password:response});
+        setEmail(correoCompleto)
+        setPassword(response)
+    },[])
+
     return (
     <div className="flex flex-col h-screen w-full">
             { /* 🔹 Sección superior (una sola) */}
@@ -18,6 +39,7 @@ export const LoginPage = () => {
                        </span>
             </section>
         <main className="flex flex-1 w-full">
+            <Toaster/>
             {/*lado izquierdo*/}
             <section className="relative hidden md:flex md:w-1/2 flex-col justify-center items-center text-white overflow-hidden bg-center bg-no-repeat bg-cover"style={{backgroundImage:`url(${bgImage})`}}>
                 <div className="px-8 ">
@@ -44,19 +66,19 @@ export const LoginPage = () => {
                     <h1 className="text-2xl font-medium mb-6 text-center">
                         INICIAR SESION <span className="text-white text xl">(Modo invitado)</span>
                     </h1>
-                    <form>
+                    <form onSubmit={ handleSubmit(mutate)}>
                         <div className="mb-4">
-                            <input placeholder="Email" 
+                            <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email"  
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00aff0]" />
                         </div>
                         <div className="relative mb-4">
-                            <input placeholder="Password"
+                            <input placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} type={showPassword?"text":"password"}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00aff0]" />
                             <button type="button" className="absolute top-1/3 right-5 cursor-pointer" onClick={togglePasswordVisibility}>
                                 <Icon icon={showPassword?"mdi:eye-off":"mdi:eye"}/>
                             </button>
                         </div>
-                        <button type="submit" className="w-full bg-gray-200 text-gray-500 font-medium py-3 rounde-full hover:bg-[#00AFF0] transition duration-200 cursor pointer hover:text-white">
+                        <button type="submit" className="w-full bg-gray-200 text-gray-500 font-medium py-3 rounded-full hover:bg-[#00AFF0] transition duration-200 cursor pointer hover:text-white"disabled={isPending}>
                             INICIAR SESION
                         </button>
                     </form>

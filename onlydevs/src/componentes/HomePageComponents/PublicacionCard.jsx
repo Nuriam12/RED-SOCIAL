@@ -8,7 +8,7 @@ export const PublicacionCard = () => {
                 <div className="flex items-center gap-3">
                        <img src="https://i.redd.it/ta7p8nbpnr481.jpg" className="w-12 h-12 rounded-full object-cover" />
                        <span className="font-bold ">
-                        Nombre de usuario
+                        Nuriam
                        </span>
                 </div>
                 <div className="flex items-center gap-2">

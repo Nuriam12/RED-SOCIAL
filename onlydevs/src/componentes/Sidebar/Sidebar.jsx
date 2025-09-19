@@ -37,10 +37,11 @@ export const Sidebar = () => {
             to:"/tarjeta"
         },
         {
-            label : "Perfil",
+            label : "Mi Perfil",
             icon:"gg:profile",
-            to:"/perfil"
-        },       
+            to:"/miperfilpage"
+        }, 
+              
     ]
     return (
         <div className="h-screen p-2 bg-white dark:bg-bg-dark transition-all duration-300 flex flex-col">
